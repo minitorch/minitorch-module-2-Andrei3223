@@ -20,8 +20,7 @@ if TYPE_CHECKING:
 
 
 class MapProto(Protocol):
-    def __call__(self, x: Tensor, out: Optional[Tensor] = ..., /) -> Tensor:
-        ...
+    def __call__(self, x: Tensor, out: Optional[Tensor] = ..., /) -> Tensor: ...
 
 
 class TensorOps:
@@ -268,8 +267,10 @@ def tensor_map(fn: Callable[[float], float]) -> Any:
         in_shape: Shape,
         in_strides: Strides,
     ) -> None:
-       idx_out, idx_in = np.zeros_like(out_shape, dtype=int), np.zeros_like(in_shape, dtype=int)
-       for i in range(len(out)):
+        idx_out, idx_in = np.zeros_like(out_shape, dtype=int), np.zeros_like(
+            in_shape, dtype=int
+        )
+        for i in range(len(out)):
             to_index(i, out_shape, idx_out)
             broadcast_index(idx_out, out_shape, in_shape, idx_in)
             out[i] = fn(in_storage[index_to_position(idx_in, in_strides)])
@@ -322,7 +323,9 @@ def tensor_zip(fn: Callable[[float, float], float]) -> Any:
         b_strides: Strides,
     ) -> None:
         out_index = np.zeros_like(out_shape, dtype=int)
-        idx_a, idx_b = np.zeros_like(a_shape, dtype=int), np.zeros_like(b_shape, dtype=int)
+        idx_a, idx_b = np.zeros_like(a_shape, dtype=int), np.zeros_like(
+            b_shape, dtype=int
+        )
 
         for i in range(len(out)):
             to_index(i, out_shape, out_index)
@@ -330,9 +333,9 @@ def tensor_zip(fn: Callable[[float, float], float]) -> Any:
             broadcast_index(out_index, out_shape, b_shape, idx_b)
 
             out[i] = fn(
-                            a_storage[index_to_position(idx_a, a_strides)],
-                            b_storage[index_to_position(idx_b, b_strides)],
-                        )
+                a_storage[index_to_position(idx_a, a_strides)],
+                b_storage[index_to_position(idx_b, b_strides)],
+            )
 
     return _zip
 
@@ -368,7 +371,7 @@ def tensor_reduce(fn: Callable[[float, float], float]) -> Any:
         reduce_dim: int,
     ) -> None:
         out_index = np.zeros(len(out_shape), dtype=int)
-        
+
         for i in range(np.size(out)):
             out_index = np.zeros_like(out_shape, dtype=int)
             to_index(i, out_shape, out_index)

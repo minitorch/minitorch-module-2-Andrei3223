@@ -94,8 +94,6 @@ def broadcast_index(
             out_index[i] = 0
 
 
-
-
 def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
     """
     Broadcast two shapes to create a new union shape.
@@ -111,7 +109,7 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
         IndexingError : if cannot broadcast
     """
     res = []
-    
+
     size_1, size_2 = np.size(shape1), np.size(shape2)
     out_size = max(size_1, size_2)
 
@@ -124,7 +122,7 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
         res.append(max(shape1[i], shape2[i]))
 
     return tuple(res)
-    
+
 
 def strides_from_shape(shape: UserShape) -> UserStrides:
     layout = [1]
@@ -244,11 +242,10 @@ class TensorData:
         ), f"Must give a position to each dimension. Shape: {self.shape} Order: {order}"
 
         return TensorData(
-                            self._storage.copy(),
-                            tuple(self._shape[np.array(order)]),
-                            tuple(self._strides[np.array(order)])
-                        ) 
-
+            self._storage.copy(),
+            tuple(self._shape[np.array(order)]),
+            tuple(self._strides[np.array(order)]),
+        )
 
     def to_string(self) -> str:
         s = ""

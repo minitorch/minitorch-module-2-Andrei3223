@@ -99,12 +99,12 @@ class Add(Function):
 class Mul(Function):
     @staticmethod
     def forward(ctx: Context, a: Tensor, b: Tensor) -> Tensor:
-        ctx.save_for_backward((a,b))
+        ctx.save_for_backward((a, b))
         return a.f.mul_zip(a, b)
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
-        (a,b), = ctx.saved_values
+        ((a, b),) = ctx.saved_values
         return b.f.mul_zip(b, grad_output), a.f.mul_zip(a, grad_output)
 
 
@@ -117,9 +117,9 @@ class Sigmoid(Function):
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
         (t1,) = ctx.saved_values
-        t_sigm =t1.f.sigmoid_map(t1) 
+        t_sigm = t1.f.sigmoid_map(t1)
 
-        return grad_output.f.mul_zip(grad_output, t_sigm.f.mul_zip(-t_sigm, t_sigm - 1 ))
+        return grad_output.f.mul_zip(grad_output, t_sigm.f.mul_zip(-t_sigm, t_sigm - 1))
 
 
 class ReLU(Function):
@@ -157,6 +157,7 @@ class Exp(Function):
         (a,) = ctx.saved_values
         return a.f.mul_zip(a.f.exp_map(a), grad_output)
 
+
 class Sum(Function):
     @staticmethod
     def forward(ctx: Context, a: Tensor, dim: Tensor) -> Tensor:
@@ -185,7 +186,9 @@ class LT(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
-        return grad_output.zeros(grad_output.shape), grad_output.zeros(grad_output.shape)
+        return grad_output.zeros(grad_output.shape), grad_output.zeros(
+            grad_output.shape
+        )
 
 
 class EQ(Function):
@@ -195,7 +198,9 @@ class EQ(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
-        return grad_output.zeros(grad_output.shape), grad_output.zeros(grad_output.shape)
+        return grad_output.zeros(grad_output.shape), grad_output.zeros(
+            grad_output.shape
+        )
 
 
 class IsClose(Function):
@@ -215,7 +220,9 @@ class Permute(Function):
         ctx.save_for_backward(order_new)
         a_perm = a._tensor.permute(*order_new)
 
-        return minitorch.Tensor.make(a_perm._storage, a_perm.shape, a_perm.strides, a.backend)
+        return minitorch.Tensor.make(
+            a_perm._storage, a_perm.shape, a_perm.strides, a.backend
+        )
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, float]:
